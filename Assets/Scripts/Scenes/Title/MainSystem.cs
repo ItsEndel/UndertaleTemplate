@@ -68,7 +68,7 @@ public class MainSystem : MonoBehaviour
                 case 3:
                     Debug.Log("Done");
 
-                    SceneManager.LoadScene(1);
+                    SceneManager.LoadScene(Main.Scene.MainMenu);
 
                     break;
             }
