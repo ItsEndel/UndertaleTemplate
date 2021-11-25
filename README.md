@@ -1,2 +1,2 @@
-# Undertale-Template
+# UndertaleTemplate
 made by unity
