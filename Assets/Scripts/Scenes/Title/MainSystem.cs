@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 public class MainSystem : MonoBehaviour
 {
@@ -66,9 +68,19 @@ public class MainSystem : MonoBehaviour
 
                 // Switch Scene
                 case 3:
-                    Debug.Log("Done");
+                    // 判断是否有存档
+                    if (!File.Exists(Application.persistentDataPath))
+                    {
+                        // 创建存档并进入新玩家界面
+                        SaveProfile save = new SaveProfile();
 
-                    SceneManager.LoadScene(Main.Scene.MainMenu);
+                        BinaryFormatter fomatter = new BinaryFormatter();
+                        FileStream file = File.Create(Application.persistentDataPath + "/file0");
+                        fomatter.Serialize(file, save);
+                        file.Close();
+
+                        SceneManager.LoadScene(Main.Scene.NewPlayer);
+                    }
 
                     break;
             }
