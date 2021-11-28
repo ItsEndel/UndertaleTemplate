@@ -2,34 +2,42 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class SaveProfile
+[System.Serializable] public class Save
 {
-    // 玩家名称
-    public string name;
+    public string name;     // 玩家名称
 
-    // 玩家所在房间
-    public int room;
+    public int room;        // 玩家所在房间
+
+    public int exp;         // 玩家经验
 }
 
-public class IniSaveProfile
+public static class IniSave
 {
-    public class General
-    {
-        // 玩家数据
-        public string Room;
-        public string Kills;
-        public string Time;
-        public string Love;
-        public string Name;
+    /* Ini File
+     * ------------------------------
+     * [General]
+     * Room = ""   // 房间ID
+     * Kills = ""  // 杀死怪物数
+     * Time = ""   // 游玩时间（秒）
+     * Love = ""   // 暴力指数
+     * Name = ""   // 名字
+     * 
+     * fun = ""    // FUN?
+     * 
+     * [Flowey]
+     * Met1 = ""
+     * 
+     */
 
-        // 彩蛋值
-        public string fun = "100";
+    public static string Path = Application.persistentDataPath + "/undertale.ini";
+
+    public static string Read(string section, string key)
+    {
+        return IniFunc.getString(section, key, "0", Path);
     }
 
-    public class Flowey
+    public static void Write(string section, string key, string value)
     {
-        // 第一次遇见的情况（全接/全躲）
-        public int Met1;
+        IniFunc.writeString(section, key, value, Path);
     }
 }

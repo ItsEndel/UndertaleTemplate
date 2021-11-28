@@ -4,7 +4,10 @@ MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
-  - font: {fileID: 12800000, guid: 9aed197c8d9ca154b846befca7991a4e, type: 3}
+  - Font: {fileID: 12800000, guid: 9aed197c8d9ca154b846befca7991a4e, type: 3}
+  - FontCn: {fileID: 12800000, guid: ee2f1291055de5e4e8945d87ff5cfabb, type: 3}
+  - voice: {fileID: 8300000, guid: 4878bf8b35bf0f744b95084687fb5144, type: 3}
+  - charPrefab: {fileID: 2708861818235624374, guid: 937f9a90e3201484492b4d0e2c54bb91, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
