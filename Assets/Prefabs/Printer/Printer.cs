@@ -31,7 +31,7 @@ public class Printer : MonoBehaviour
                                                                     //
     private bool textSet = false;                                   // 文本是否被设置过
                                                                     //
-    private Vector3 charPos = new Vector3(0, 0, 0);            // 下一个字符显示的位置
+    private Vector3 charPos = new Vector3(0, 0, 0);                 // 下一个字符显示的位置
                                                                     //
     private int printed = 0;                                        // 已检查字数
                                                                     //

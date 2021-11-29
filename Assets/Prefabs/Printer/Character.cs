@@ -29,8 +29,6 @@ public class charEffect {
             GroupCollection groups = a.Groups;
 
             args.Add(groups[1].Value, groups[2].Value);
-
-            Debug.Log(groups[1].Value + ":" + groups[2].Value);
         };
     }                                   // 读取参数
     public virtual void Initial(GameObject it) { obj = it; }                    // 初始化
@@ -51,8 +49,8 @@ public class trembleEffect : charEffect
     public override void Initial(GameObject it) {
         base.Initial(it);
 
-        if (args.ContainsKey("level")) { level = float.Parse(args["level"]) / 100f; Debug.Log("level=" + level); }
-        if (args.ContainsKey("delay")) { level = int.Parse(args["delay"]); Debug.Log("delay=" + delay); }
+        if (args.ContainsKey("level")) { level = float.Parse(args["level"]) / 100f; }
+        if (args.ContainsKey("delay")) { level = int.Parse(args["delay"]); }
 
         position = it.transform.localPosition;
 
@@ -68,8 +66,8 @@ public class trembleEffect : charEffect
         {
             Debug.Log(Tool.Random.NextDouble());
 
-            float a = ((float)Tool.Random.NextDouble() % (level * 2)) - level;
-            float b = ((float)Tool.Random.NextDouble() % (level * 2)) - level;
+            float a = ((float)Tool.Random.NextDouble() * (level * 2)) - level;
+            float b = ((float)Tool.Random.NextDouble() * (level * 2)) - level;
 
             obj.transform.localPosition = new Vector3((position.x + a), (position.y + b), 0);
 
