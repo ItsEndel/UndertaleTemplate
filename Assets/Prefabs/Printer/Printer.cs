@@ -11,43 +11,45 @@ public class Printer : MonoBehaviour
     public string Text;                                 // 打字机要显示的文本及文本代码
                                                         //
     public Color charColor = new Color(1, 1, 1, 1);     // 文字的颜色
-    public int charSize = 32;                           // 文字的尺寸
+    public int charSize = 24;                           // 文字的尺寸
     public Font Font;                                   // 文字的字体
     public Font FontCn;                                 // 中文文字的字体
                                                         //
     public AudioClip voice;                             // 打字机音效
                                                         //
-    public int charSpace = -8;                          // 字符间距
+    public int charSpace = -9;                          // 字符间距（推荐charSize*3/8）
     public int charSpaceCn = 0;                         // 中文字符间距
     public int lineSpace = 16;                          // 行间距
 
     // 打字机内部变量
-    private AudioSource audio;                                  // 音源组件
-                                                                //
-    public GameObject charPrefab;                               // 字符实例预制件
-    private List<GameObject> chars = new List<GameObject>();    // 字符实例列表
-                                                                //
-    private bool textSet = false;                               // 文本是否被设置过
-                                                                //
-    private Vector3 charPos = new Vector3(320, 240, 0);           // 下一个字符显示的位置
-                                                                //
-    private int printed = 0;                                    // 已检查字数
-                                                                //
-    private int printDelay = 50;                                 // 打字延迟
-                                                                //
-    private int delay = 0;                                      // 显示下一个字前的延迟 
-    private bool afterBackslash = false;                        // 是否在反斜杠后
-    private bool readingCodeName = false;                       // 是否正在读取文字代码
-    private bool readingCodeValue = false;                      // 是否正在读取文字代码值
-                                                                //
-    private string codeName = "";                               // 文字代码的名字
-    private string codeValue = "";                              // 文字代码的值
+    private AudioSource audioSource;                                // 音源组件
+                                                                    //
+    public GameObject charPrefab;                                   // 字符实例预制件
+    private List<GameObject> chars = new List<GameObject>();        // 字符实例列表
+                                                                    //
+    private List<charEffect> charEffects = new List<charEffect>();  // 字符效果列表
+                                                                    //
+    private bool textSet = false;                                   // 文本是否被设置过
+                                                                    //
+    private Vector3 charPos = new Vector3(0, 0, 0);            // 下一个字符显示的位置
+                                                                    //
+    private int printed = 0;                                        // 已检查字数
+                                                                    //
+    private int printDelay = 50;                                    // 打印延迟
+                                                                    //
+    private int delay = 0;                                          // 显示下一个字前的延迟 
+    private bool afterBackslash = false;                            // 是否在反斜杠后
+    private bool readingCodeName = false;                           // 是否正在读取文字代码
+    private bool readingCodeValue = false;                          // 是否正在读取文字代码值
+                                                                    //
+    private string codeName = "";                                   // 文字代码的名字
+    private string codeValue = "";                                  // 文字代码的值
 
 
 
     void Start()
     {
-        audio = GetComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
     }
 
 
@@ -100,7 +102,7 @@ public class Printer : MonoBehaviour
 
                             case "voice":
                                 voice = Resources.Load<AudioClip>(codeValue);
-                                audio.clip = voice;
+                                audioSource.clip = voice;
                                 break;
 
                             case "charSpace":
@@ -113,6 +115,17 @@ public class Printer : MonoBehaviour
 
                             case "lineSpace":
                                 lineSpace = int.Parse(codeValue);
+                                break;
+
+                            case "tremble":
+                                trembleEffect effect = new trembleEffect();
+                                effect.Read(codeValue);
+                                charEffects.Add(effect);
+                                break;
+
+                            case "/tremble":
+                                int index = charEffects.FindIndex(i => i is trembleEffect);
+                                charEffects.RemoveAt(index);
                                 break;
 
                             default:
@@ -133,7 +146,7 @@ public class Printer : MonoBehaviour
                     switch (c)
                     {
                         case '\n':      // 换行
-                            charPos.x = 320;
+                            charPos.x = 0;
                             charPos.y -= charSize + lineSpace;
                             break;
 
@@ -161,6 +174,7 @@ public class Printer : MonoBehaviour
     private void Print(char c)
     {
         GameObject charInstance = Instantiate(charPrefab, this.transform);
+        Character charScript = charInstance.GetComponent<Character>();
         Text charText = charInstance.GetComponent<Text>();
         charText.text = c.ToString();
         charText.color = charColor;
@@ -168,11 +182,23 @@ public class Printer : MonoBehaviour
         charText.font = (c > 32 && c < 127) ? Font : FontCn;
         charInstance.transform.position = charPos;
 
+        List<charEffect> effects = new List<charEffect>();
+        foreach (charEffect a in charEffects)
+        {
+            if (a is trembleEffect)
+            {
+                trembleEffect effect = new trembleEffect();
+                effect.args = a.args;
+                effects.Add(effect);
+            }
+        }
+        charScript.effects = effects;
+
         charPos.x += (c > 32 && c < 127) ? (charSize + charSpace) : (charSize + charSpaceCn);
 
         delay = printDelay;
 
-        audio.PlayOneShot(audio.clip);
+        if (c != ' ') audioSource.PlayOneShot(audioSource.clip);
     }
 
     public bool Finished()

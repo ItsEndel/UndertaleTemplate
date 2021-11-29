@@ -20,12 +20,9 @@ public class NewPlayerSystem : MonoBehaviour
 
     void wait()
     {
-        GameObject printerInstance = Instantiate<GameObject>(printerPrefab, GameObject.Find("UI").transform);
+        GameObject printerInstance = Instantiate<GameObject>(printerPrefab,new Vector3(0, 0, 0), new Quaternion(), GameObject.Find("UI").transform);
         Printer printer = printerInstance.GetComponent<Printer>();
 
-        printer.Text = "这是一个[color=0,1,0]Test[color=1,1,1]文本。.\n\n[size=32][charSpace=-12]并且还能变成/[/[BIG SHOT]]";
-        printer.charSize = 24;
-        printer.charSpace = -9;
-
+        printer.Text = "[size=24][charSpace=-9]这是一段[color=0,1,0][tremble=level:30,delay:10]Test[/tremble=][color=1,1,1]文本.";
     }
 }

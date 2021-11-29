@@ -3,6 +3,13 @@ using System.Text;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
+
+
+public static class Tool
+{
+    public static System.Random Random = new System.Random();
+}
+
 public static class IniFunc
 {
     /// <summary>
