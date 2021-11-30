@@ -10,7 +10,7 @@ public class Character : MonoBehaviour
 {
     public List<charEffect> effects = new List<charEffect>();
 
-    void Start() { foreach (charEffect i in effects) i.Initial(this.gameObject); }
+    void Start() { foreach (charEffect i in effects) i.Initial(this.gameObject); Debug.Log(Time.deltaTime); }
 
     void Update() { foreach (charEffect i in effects) i.Update(); }
 }
@@ -20,9 +20,9 @@ public class Character : MonoBehaviour
 public class charEffect {                           
     public GameObject obj;                                                      // 字符对象
     public Dictionary<string, string> args = new Dictionary<string, string>();  // 自动读取的参数
-    public virtual void Read(string value)
+    public void Read(string value)
     {
-        Regex regex = new Regex("([A-Za-z]+):([.0-9]+)");
+        Regex regex = new Regex("([A-Za-z]+):([0-9.]+)");
         MatchCollection match = regex.Matches(value);
         foreach (Match a in match)
         {
@@ -49,8 +49,8 @@ public class trembleEffect : charEffect
     public override void Initial(GameObject it) {
         base.Initial(it);
 
-        if (args.ContainsKey("level")) { level = float.Parse(args["level"]) / 100f; }
-        if (args.ContainsKey("delay")) { level = int.Parse(args["delay"]); }
+        if (args.ContainsKey("level")) { level = float.Parse(args["level"]); }
+        if (args.ContainsKey("delay")) { delay = int.Parse(args["delay"]); }
 
         position = it.transform.localPosition;
 
@@ -64,8 +64,6 @@ public class trembleEffect : charEffect
             timer--;
         } else
         {
-            Debug.Log(Tool.Random.NextDouble());
-
             float a = ((float)Tool.Random.NextDouble() * (level * 2)) - level;
             float b = ((float)Tool.Random.NextDouble() * (level * 2)) - level;
 

@@ -10,18 +10,22 @@ public class Printer : MonoBehaviour
                                                         //
     public string Text;                                 // 打字机要显示的文本及文本代码
                                                         //
-    public Color charColor = new Color(1, 1, 1, 1);     // 文字的颜色
-    public int charSize = 24;                           // 文字的尺寸
+    public int PrintDelay = 50;                         // 打印延迟
+                                                        //
+    public Color CharColor = new Color(1, 1, 1, 1);     // 文字的颜色
+    public int CharSize = 24;                           // 文字的尺寸
     public Font Font;                                   // 文字的字体
     public Font FontCn;                                 // 中文文字的字体
                                                         //
     public AudioClip voice;                             // 打字机音效
                                                         //
-    public int charSpace = -9;                          // 字符间距（推荐charSize*3/8）
-    public int charSpaceCn = 0;                         // 中文字符间距
-    public int lineSpace = 16;                          // 行间距
+    public int CharSpace = -9;                          // 字符间距（推荐charSize*3/8）
+    public int CharSpaceCn = 0;                         // 中文字符间距
+    public int LineSpace = 16;                          // 行间距
 
     // 打字机内部变量
+    private string printText;
+
     private AudioSource audioSource;                                // 音源组件
                                                                     //
     public GameObject charPrefab;                                   // 字符实例预制件
@@ -34,8 +38,6 @@ public class Printer : MonoBehaviour
     private Vector3 charPos = new Vector3(0, 0, 0);                 // 下一个字符显示的位置
                                                                     //
     private int printed = 0;                                        // 已检查字数
-                                                                    //
-    private int printDelay = 50;                                    // 打印延迟
                                                                     //
     private int delay = 0;                                          // 显示下一个字前的延迟 
     private bool afterBackslash = false;                            // 是否在反斜杠后
@@ -50,22 +52,24 @@ public class Printer : MonoBehaviour
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
+
+        printText = Text;
     }
 
 
 
     void Update()
     {
-        if (printed < Text.Length + 1 && delay > 0)
+        if (printed < printText.Length + 1 && delay > 0)
         {
             delay--;
         } else
         {
-            for (int i = printed; i < Text.Length; i++)
+            for (int i = printed; i < printText.Length; i++)
             {
                 printed++;
 
-                char c = Text[i];
+                char c = printText[i];
 
                 if (readingCodeName)            // 读取文本代码名
                 {
@@ -84,12 +88,16 @@ public class Printer : MonoBehaviour
                         readingCodeValue = false;
                         switch (codeName)
                         {
+                            case "delay":
+                                PrintDelay = int.Parse(codeValue);
+                                break;
+
                             case "color":
-                                charColor = String.ToColor(codeValue);
+                                CharColor = String.ToColor(codeValue);
                                 break;
 
                             case "size":
-                                charSize = int.Parse(codeValue);
+                                CharSize = int.Parse(codeValue);
                                 break;
 
                             case "font":
@@ -106,15 +114,15 @@ public class Printer : MonoBehaviour
                                 break;
 
                             case "charSpace":
-                                charSpace = int.Parse(codeValue);
+                                CharSpace = int.Parse(codeValue);
                                 break;
 
                             case "charSpaceCn":
-                                charSpaceCn = int.Parse(codeValue);
+                                CharSpaceCn = int.Parse(codeValue);
                                 break;
 
                             case "lineSpace":
-                                lineSpace = int.Parse(codeValue);
+                                LineSpace = int.Parse(codeValue);
                                 break;
 
                             case "tremble":
@@ -147,7 +155,7 @@ public class Printer : MonoBehaviour
                     {
                         case '\n':      // 换行
                             charPos.x = 0;
-                            charPos.y -= charSize + lineSpace;
+                            charPos.y -= CharSize + LineSpace;
                             break;
 
                         case '/':       // 强制打印下一个字符
@@ -177,10 +185,11 @@ public class Printer : MonoBehaviour
         Character charScript = charInstance.GetComponent<Character>();
         Text charText = charInstance.GetComponent<Text>();
         charText.text = c.ToString();
-        charText.color = charColor;
-        charText.fontSize = charSize;
+        charText.color = CharColor;
+        charText.fontSize = CharSize;
         charText.font = (c > 32 && c < 127) ? Font : FontCn;
         charInstance.transform.position = charPos;
+        charInstance.transform.Translate(320, -240, 0);
 
         List<charEffect> effects = new List<charEffect>();
         foreach (charEffect a in charEffects)
@@ -194,9 +203,9 @@ public class Printer : MonoBehaviour
         }
         charScript.effects = effects;
 
-        charPos.x += (c > 32 && c < 127) ? (charSize + charSpace) : (charSize + charSpaceCn);
+        charPos.x += (c > 32 && c < 127) ? (CharSize + CharSpace) : (CharSize + CharSpaceCn);
 
-        delay = printDelay;
+        delay = PrintDelay;
 
         if (c != ' ') audioSource.PlayOneShot(audioSource.clip);
     }
