@@ -10,7 +10,7 @@ public class Printer : MonoBehaviour
                                                         //
     public string Text;                                 // 打字机要显示的文本及文本代码
                                                         //
-    public int PrintDelay = 50;                         // 打印延迟
+    public int PrintDelay = 30;                         // 打印延迟
                                                         //
     public Color CharColor = new Color(1, 1, 1, 1);     // 文字的颜色
     public int CharSize = 24;                           // 文字的尺寸
@@ -21,7 +21,7 @@ public class Printer : MonoBehaviour
                                                         //
     public int CharSpace = -9;                          // 字符间距（推荐charSize*3/8）
     public int CharSpaceCn = 0;                         // 中文字符间距
-    public int LineSpace = 16;                          // 行间距
+    public int LineSpace = 8;                           // 行间距（推荐charSize/3*2）
 
     // 打字机内部变量
     private string printText;
@@ -40,6 +40,7 @@ public class Printer : MonoBehaviour
     private int printed = 0;                                        // 已检查字数
                                                                     //
     private int delay = 0;                                          // 显示下一个字前的延迟 
+                                                                    //
     private bool afterBackslash = false;                            // 是否在反斜杠后
     private bool readingCodeName = false;                           // 是否正在读取文字代码
     private bool readingCodeValue = false;                          // 是否正在读取文字代码值
@@ -54,6 +55,8 @@ public class Printer : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
 
         printText = Text;
+
+
     }
 
 
@@ -88,6 +91,10 @@ public class Printer : MonoBehaviour
                         readingCodeValue = false;
                         switch (codeName)
                         {
+                            case "sleep":
+                                delay = int.Parse(codeValue);
+                                return;
+
                             case "delay":
                                 PrintDelay = int.Parse(codeValue);
                                 break;
@@ -137,7 +144,7 @@ public class Printer : MonoBehaviour
                                 break;
 
                             default:
-                                Debug.LogWarning(LogMessages.unknownTextCode);
+                                Debug.LogWarning(LogWarning.unknownTextCode);
                                 break;
                         }
                     } else
@@ -188,7 +195,7 @@ public class Printer : MonoBehaviour
         charText.color = CharColor;
         charText.fontSize = CharSize;
         charText.font = (c > 32 && c < 127) ? Font : FontCn;
-        charInstance.transform.position = charPos;
+        charInstance.transform.position = charPos + this.transform.position;
         charInstance.transform.Translate(320, -240, 0);
 
         List<charEffect> effects = new List<charEffect>();
