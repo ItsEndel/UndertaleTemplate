@@ -10,7 +10,7 @@ public class Printer : MonoBehaviour
                                                         //
     public string Text;                                 // 打字机要显示的文本及文本代码
                                                         //
-    public int PrintDelay = 30;                         // 打印延迟
+    public int PrintDelay = 5;                         // 打印延迟
                                                         //
     public Color CharColor = new Color(1, 1, 1, 1);     // 文字的颜色
     public int CharSize = 24;                           // 文字的尺寸
@@ -33,8 +33,6 @@ public class Printer : MonoBehaviour
                                                                     //
     private List<charEffect> charEffects = new List<charEffect>();  // 字符效果列表
                                                                     //
-    private bool textSet = false;                                   // 文本是否被设置过
-                                                                    //
     private Vector3 charPos = new Vector3(0, 0, 0);                 // 下一个字符显示的位置
                                                                     //
     private int printed = 0;                                        // 已检查字数
@@ -55,133 +53,144 @@ public class Printer : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
 
         printText = Text;
-
-
     }
 
 
 
     void Update()
     {
-        if (printed < printText.Length + 1 && delay > 0)
+        if (printed == printText.Length) { finished = true; }
+        else 
         {
-            delay--;
-        } else
-        {
-            for (int i = printed; i < printText.Length; i++)
+            finished = false;
+            if (printed < printText.Length && delay > 0) { delay--; }
+            else
             {
-                printed++;
-
-                char c = printText[i];
-
-                if (readingCodeName)            // 读取文本代码名
+                for (int i = printed; i < printText.Length; i++)
                 {
-                    if (c == '=')
+                    printed++;
+
+                    char c = printText[i];
+
+                    if (readingCodeName)            // 读取文本代码名
                     {
-                        readingCodeName = false;
-                        readingCodeValue = true;
-                    } else
-                    {
-                        codeName += c;
-                    }
-                } else if (readingCodeValue)    // 读取文本代码值
-                {
-                    if (c == ']')
-                    {
-                        readingCodeValue = false;
-                        switch (codeName)
+                        if (c == '=')
                         {
-                            case "sleep":
-                                delay = int.Parse(codeValue);
-                                return;
-
-                            case "delay":
-                                PrintDelay = int.Parse(codeValue);
-                                break;
-
-                            case "color":
-                                CharColor = String.ToColor(codeValue);
-                                break;
-
-                            case "size":
-                                CharSize = int.Parse(codeValue);
-                                break;
-
-                            case "font":
-                                Font = Resources.Load<Font>(codeValue);
-                                break;
-
-                            case "fontCn":
-                                FontCn = Resources.Load<Font>(codeValue);
-                                break;
-
-                            case "voice":
-                                voice = Resources.Load<AudioClip>(codeValue);
-                                audioSource.clip = voice;
-                                break;
-
-                            case "charSpace":
-                                CharSpace = int.Parse(codeValue);
-                                break;
-
-                            case "charSpaceCn":
-                                CharSpaceCn = int.Parse(codeValue);
-                                break;
-
-                            case "lineSpace":
-                                LineSpace = int.Parse(codeValue);
-                                break;
-
-                            case "tremble":
-                                trembleEffect effect = new trembleEffect();
-                                effect.Read(codeValue);
-                                charEffects.Add(effect);
-                                break;
-
-                            case "/tremble":
-                                int index = charEffects.FindIndex(i => i is trembleEffect);
-                                charEffects.RemoveAt(index);
-                                break;
-
-                            default:
-                                Debug.LogWarning(LogWarning.unknownTextCode);
-                                break;
+                            readingCodeName = false;
+                            readingCodeValue = true;
                         }
-                    } else
-                    {
-                        codeValue += c;
+                        else
+                        {
+                            codeName += c;
+                        }
                     }
-                } else if (afterBackslash)      // 打印下一个字符
-                {
-                    Print(c);
-                    afterBackslash = false;
-                    return;
-                } else                          // 检测字符
-                {
-                    switch (c)
+                    else if (readingCodeValue)    // 读取文本代码值
                     {
-                        case '\n':      // 换行
-                            charPos.x = 0;
-                            charPos.y -= CharSize + LineSpace;
-                            break;
+                        if (c == ']')
+                        {
+                            readingCodeValue = false;
+                            switch (codeName)
+                            {
+                                case "sleep":
+                                    delay = int.Parse(codeValue);
+                                    return;
 
-                        case '/':       // 强制打印下一个字符
-                            afterBackslash = true;
-                            break;
+                                case "delay":
+                                    PrintDelay = int.Parse(codeValue);
+                                    break;
 
-                        case '[':       // 读取文本代码
-                            codeName = "";
-                            codeValue = "";
-                            readingCodeName = true;
-                            break;
+                                case "color":
+                                    CharColor = String.ToColor(codeValue);
+                                    break;
 
-                        default:        // 打印
-                            Print(c);
-                            return;
+                                case "size":
+                                    CharSize = int.Parse(codeValue);
+                                    break;
+
+                                case "font":
+                                    Font = Resources.Load<Font>(codeValue);
+                                    break;
+
+                                case "fontCn":
+                                    FontCn = Resources.Load<Font>(codeValue);
+                                    break;
+
+                                case "voice":
+                                    voice = Resources.Load<AudioClip>(codeValue);
+                                    audioSource.clip = voice;
+                                    break;
+
+                                case "charSpace":
+                                    CharSpace = int.Parse(codeValue);
+                                    break;
+
+                                case "charSpaceCn":
+                                    CharSpaceCn = int.Parse(codeValue);
+                                    break;
+
+                                case "lineSpace":
+                                    LineSpace = int.Parse(codeValue);
+                                    break;
+
+                                case "position":
+                                    charPos = String.ToVector3(codeValue);
+                                    break;
+
+                                case "tremble":
+                                    trembleEffect effect = new trembleEffect();
+                                    effect.Read(codeValue);
+                                    charEffects.Add(effect);
+                                    break;
+
+                                case "/tremble":
+                                    int index = charEffects.FindIndex(i => i is trembleEffect);
+                                    charEffects.RemoveAt(index);
+                                    break;
+
+                                default:
+                                    Debug.LogWarning(LogWarning.unknownTextCode);
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            codeValue += c;
+                        }
+                    }
+                    else if (afterBackslash)      // 打印下一个字符
+                    {
+                        Print(c);
+                        afterBackslash = false;
+                        return;
+                    }
+                    else                          // 检测字符
+                    {
+                        switch (c)
+                        {
+                            case '\n':      // 换行
+                                charPos.x = 0;
+                                charPos.y -= CharSize + LineSpace;
+                                break;
+
+                            case '/':       // 强制打印下一个字符
+                                afterBackslash = true;
+                                break;
+
+                            case '[':       // 读取文本代码
+                                codeName = "";
+                                codeValue = "";
+                                readingCodeName = true;
+                                break;
+
+                            default:        // 打印
+                                Print(c);
+                                return;
+                        }
                     }
                 }
             }
         }
+        
     }
 
 
