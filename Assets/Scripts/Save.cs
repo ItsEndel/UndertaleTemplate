@@ -22,7 +22,7 @@ public static class IniSave
      * Love = ""   // 暴力指数
      * Name = ""   // 名字
      * 
-     * fun = ""    // FUN?
+     * fun = ""    // FUN
      * 
      * [Flowey]
      * Met1 = ""

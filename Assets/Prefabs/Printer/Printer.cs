@@ -10,7 +10,7 @@ public class Printer : MonoBehaviour
                                                         //
     public string Text;                                 // 打字机要显示的文本及文本代码
                                                         //
-    public int PrintDelay = 5;                         // 打印延迟
+    public int PrintDelay = 5;                          // 打印延迟
                                                         //
     public Color CharColor = new Color(1, 1, 1, 1);     // 文字的颜色
     public int CharSize = 24;                           // 文字的尺寸
@@ -24,8 +24,19 @@ public class Printer : MonoBehaviour
     public int LineSpace = 8;                           // 行间距（推荐charSize/3*2）
 
     // 打字机内部变量
-    private string printText;
-
+    private char[] silentChars = new char[] {                       // 不播放voice的字符
+        ' ',
+        '\n',
+        ',',
+        '.',
+        ':',
+        '，',
+        '。',
+        '：'
+    };                                                              
+                                                                    //
+    private string printText;                                       // 打字机要显示的文本及文本代码
+                                                                    //
     private AudioSource audioSource;                                // 音源组件
                                                                     //
     public GameObject charPrefab;                                   // 字符实例预制件
@@ -197,6 +208,8 @@ public class Printer : MonoBehaviour
 
     private void Print(char c)
     {
+        bool contains = false;
+
         GameObject charInstance = Instantiate(charPrefab, this.transform);
         Character charScript = charInstance.GetComponent<Character>();
         Text charText = charInstance.GetComponent<Text>();
@@ -223,7 +236,9 @@ public class Printer : MonoBehaviour
 
         delay = PrintDelay;
 
-        if (c != ' ') audioSource.PlayOneShot(audioSource.clip);
+        foreach (char i in silentChars) { if (i == c) contains = true; }
+
+        if (!contains) audioSource.PlayOneShot(audioSource.clip);
     }
 
     public bool Finished()

@@ -1,6 +1,7 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class NewPlayerSystem : MonoBehaviour
+public class StorySystem : MonoBehaviour
 {
     private GameObject ui;
     private GameObject intro;
@@ -102,11 +103,21 @@ public class NewPlayerSystem : MonoBehaviour
                         case 8:
                         case 9:
                         case 10:
+                            printer = Instantiate<GameObject>(printerPrefab, ui.transform);
+                            printerScript = printer.GetComponent<Printer>();
+                            printer.transform.position = new Vector3(120, 160, 0);
+                            printerScript.Text = "[sleep=75] ";
+                            break;
+
                         case 11:
                             printer = Instantiate<GameObject>(printerPrefab, ui.transform);
                             printerScript = printer.GetComponent<Printer>();
                             printer.transform.position = new Vector3(120, 160, 0);
-                            printerScript.Text = "[sleep=90] ";
+                            printerScript.Text = "[sleep=90]";
+                            break;
+
+                        case 12:
+                            SceneManager.LoadScene(Main.Scene.Title);
                             break;
 
                     }

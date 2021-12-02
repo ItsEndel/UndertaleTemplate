@@ -43,7 +43,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 4878bf8b35bf0f744b95084687fb5144, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -141,12 +141,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Text: 
-  charColor: {r: 1, g: 1, b: 1, a: 1}
-  charSize: 32
+  PrintDelay: 5
+  CharColor: {r: 1, g: 1, b: 1, a: 1}
+  CharSize: 24
   Font: {fileID: 12800000, guid: 9aed197c8d9ca154b846befca7991a4e, type: 3}
   FontCn: {fileID: 12800000, guid: ee2f1291055de5e4e8945d87ff5cfabb, type: 3}
   voice: {fileID: 8300000, guid: 4878bf8b35bf0f744b95084687fb5144, type: 3}
-  charSpace: -8
-  charSpaceCn: 0
-  lineSpace: 16
+  CharSpace: -9
+  CharSpaceCn: 0
+  LineSpace: 8
   charPrefab: {fileID: 2708861818235624374, guid: 937f9a90e3201484492b4d0e2c54bb91, type: 3}

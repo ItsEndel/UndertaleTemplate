@@ -83,6 +83,8 @@ public class TitleSystem : MonoBehaviour
                         // FileStream file = File.Create(Application.persistentDataPath + "/file0");
                         // fomatter.Serialize(file, save);
                         // file.Close();
+
+                        IniSave.Write("General", "fun", 100f.ToString());
                     } else
                     {
                         SceneManager.LoadScene(Main.Scene.MainMenu);
