@@ -82,7 +82,7 @@ public class StorySystem : MonoBehaviour
                             printer = Instantiate<GameObject>(printerPrefab, ui.transform);
                             printerScript = printer.GetComponent<Printer>();
                             printer.transform.position = new Vector3(120, 160, 0);
-                            printerScript.Text = "[charSpaceCn=13][lineSpace=13][delay=3]很多年过去了.[sleep=15].[sleep=15].";
+                            printerScript.Text = "[charSpaceCn=13][lineSpace=13][delay=3]很多年过去了.[sleep=15].[sleep=15].[sleep=5]";
                             break;
 
                         case 5:
@@ -113,7 +113,7 @@ public class StorySystem : MonoBehaviour
                             printer = Instantiate<GameObject>(printerPrefab, ui.transform);
                             printerScript = printer.GetComponent<Printer>();
                             printer.transform.position = new Vector3(120, 160, 0);
-                            printerScript.Text = "[sleep=90]";
+                            printerScript.Text = "[sleep=80]";
                             break;
 
                         case 12:
